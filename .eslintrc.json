@@ -1,0 +1,19 @@
+{
+  "extends": ["google"],
+  "env": {
+    "es6": true,
+    "browser": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2017
+  },
+  "rules": {
+    "consistent-return": 0,
+    "func-names": 0,
+    "no-param-reassign": 0,
+    "no-underscore-dangle": 0,
+    "space-before-function-paren": 0,
+    "import/no-extraneous-dependencies": 0
+  }
+}
