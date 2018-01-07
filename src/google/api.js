@@ -9,13 +9,6 @@ const TOKEN_DIR = '.credentials/';
 const TOKEN_PATH = TOKEN_DIR + 'sheets.googleapis.com.token.json';
 const CLIENT_SECRET = require('../../.credentials/google_client_id.json');
 
-/**
- * Create an OAuth2 client with the given credentials, and then execute the
- * given callback function.
- *
- * @param {Object} credentials The authorization client credentials.
- * @return {Object} oauth2Client
- */
 async function authorize(credentials) {
   const clientSecret = credentials.installed.client_secret;
   const clientId = credentials.installed.client_id;
@@ -33,12 +26,6 @@ async function authorize(credentials) {
   return oauth2Client;
 }
 
-/**
- * Get and store new token after prompting for user authorization
- *
- * @param {google.auth.OAuth2} oauth2Client The OAuth2 client to get token for.
- *     client.
- */
 async function getNewToken(oauth2Client) {
   const authUrl = oauth2Client.generateAuthUrl({
     access_type: 'offline',
@@ -68,11 +55,6 @@ async function getNewToken(oauth2Client) {
   });
 }
 
-/**
- * Store token to disk be used in later program executions.
- *
- * @param {Object} token The token to store to disk.
- */
 async function storeToken(token) {
   try {
     fs.mkdirSync(TOKEN_DIR);

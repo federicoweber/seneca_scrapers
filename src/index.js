@@ -1,6 +1,5 @@
 const setup = require('./starter-kit/setup');
 const amex = require('./scrapers/amex');
-const testTransactons = require('../tmp/amex_transactions.json');
 const transactionsLogger = require('./google/transactionsLogger');
 
 exports.handler = async (event, context, callback) => {
@@ -15,9 +14,7 @@ exports.handler = async (event, context, callback) => {
 };
 
 exports.run = async (browser) => {
-  // const amexTransactions = await amex.scrape(browser);
-  const amexTransactions = testTransactons;
-  // console.log(amexTransactions);
+  const amexTransactions = await amex.scrape(browser);
   await transactionsLogger.log(amexTransactions);
 
   return 'done';
