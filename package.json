@@ -1,7 +1,7 @@
 {
-  "name": "scraper_amex",
-  "version": "0.9.4",
-  "description": "a simple scraper to get amex cards transactions and save those in a google sheet, running on AWS lambda",
+  "name": "seneca_scraper",
+  "version": "0.1.0",
+  "description": "A simple tool to track personal expenses in a spread Google spreadsheet",
   "author": "federicoweber@gmail.com",
   "scripts": {
     "package": "npm run package-prepare && cp chrome/headless_shell.tar.gz dist && cd dist && zip -rq ../package.zip .",
@@ -12,6 +12,9 @@
     "lint": "./node_modules/.bin/eslint src"
   },
   "dependencies": {
+    "bluebird": "^3.5.1",
+    "google-auth-library": "^0.12.0",
+    "googleapis": "^23.0.0",
     "puppeteer": "^0.10.2",
     "tar": "^4.0.1"
   },

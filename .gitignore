@@ -2,7 +2,7 @@ dist
 package.zip
 .local-chromium
 local-chromium.tar.gz
-credentials.json
+.credentials
 
 tmp
 
