@@ -7,7 +7,9 @@ const AMEX_URL = 'https://online.americanexpress.com/myca/estmt/us/list.do?intli
 exports.scrape = async (browser) => {
   const page = await browser.newPage();
   page.on('console', (msg) => console.log('PAGE LOG:', ...msg.args));
-  await page.goto(AMEX_URL);
+  await page.goto(AMEX_URL, {
+    timeout: 60000,
+  });
 
   // Login
   await page.waitFor('#lilo_userName');
@@ -18,7 +20,9 @@ exports.scrape = async (browser) => {
   await page.click('#lilo_formSubmit');
 
   // Get transactions
-  await page.waitForNavigation();
+  await page.waitForNavigation({
+    timeout: 60000,
+  });
   const transactions = await page.evaluate(() => {
     let scraped = [];
     $('#listData .posted-item-body')
