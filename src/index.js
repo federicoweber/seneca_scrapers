@@ -2,6 +2,9 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
 
+const path = require('path');
+global.appRoot = path.resolve(__dirname);
+
 const setup = require('./starter-kit/setup');
 const amex = require('./scrapers/amex');
 const transactionsLogger = require('./google/transactionsLogger');
