@@ -1,62 +1,49 @@
+const Bluebird = require('bluebird');
 const sheetsApi = require('./api');
 const google = require('googleapis');
 const sheets = google.sheets('v4');
+const spreadsheetsValues = Bluebird.promisifyAll(sheets.spreadsheets.values);
 
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const RANGE = 'transactions!A2:F';
 
 exports.log = async (transactions) => {
-  const logger = logNewTransactions(transactions);
-  await sheetsApi.execute(logger);
+  const authClient = await sheetsApi.getAuthClient();
+  await logNewTransactions(authClient, transactions);
 };
 
-const logNewTransactions = (transactions = []) => {
-  return async (authClient) => {
-    const prevTransactions = await getPrevTransactions(authClient);
-    const uniqTransactions = removeDuplicates(transactions, prevTransactions);
-    console.log(`${uniqTransactions.length} new transactions logged!`);
-    await appendTransactions(authClient, uniqTransactions);
-  };
+const logNewTransactions = async (authClient, transactions = []) => {
+  const prevTransactions = await getPrevTransactions(authClient) || [];
+  const uniqTransactions = await removeDuplicates(
+    transactions,
+    prevTransactions
+  );
+  await appendTransactions(authClient, uniqTransactions);
+  console.log(`${uniqTransactions.length} new transactions logged!`);
+  return uniqTransactions;
 };
 
-async function getPrevTransactions(authClient) {
-  return new Promise((resolve, reject) => {
-    sheets.spreadsheets.values
-      .get({
-        auth: authClient,
-        spreadsheetId: SPREADSHEET_ID,
-        range: RANGE,
-        valueRenderOption: 'UNFORMATTED_VALUE',
-        dateTimeRenderOption: 'FORMATTED_STRING',
-      }, (err, response) => {
-        if (err) {
-          logApiError(err);
-          reject();
-        }
-
-        resolve(response.values || []);
+function getPrevTransactions(authClient) {
+  return spreadsheetsValues.getAsync({
+      auth: authClient,
+      spreadsheetId: SPREADSHEET_ID,
+      range: RANGE,
+      valueRenderOption: 'UNFORMATTED_VALUE',
+      dateTimeRenderOption: 'FORMATTED_STRING',
+    }).then((res) => {
+      return res.values;
     });
-  });
 }
 
-async function appendTransactions(authClient, transactions) {
-  return new Promise((resolve, reject) => {
-    sheets.spreadsheets.values
-      .append({
-        auth: authClient,
-        spreadsheetId: SPREADSHEET_ID,
-        range: RANGE,
-        valueInputOption: 'USER_ENTERED',
-        resource: {values: transactions},
-      }, (err, response) => {
-        if (err) {
-          logApiError(err);
-          reject();
-        }
-
-        resolve();
-    });
-  });
+function appendTransactions(authClient, transactions) {
+    return spreadsheetsValues.appendAsync({
+      auth: authClient,
+      spreadsheetId: SPREADSHEET_ID,
+      range: RANGE,
+      valueInputOption: 'USER_ENTERED',
+      resource: {values: transactions},
+    })
+    .then(() => {}, logApiError);
 }
 
 function removeDuplicates(transactions, prevTransactions) {

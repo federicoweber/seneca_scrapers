@@ -15,7 +15,6 @@ exports.getBrowser = (() => {
         executablePath: config.executablePath,
         args: config.launchOptionForLambda,
         dumpio: !!exports.DEBUG,
-        timeout: 0,
       });
       debugLog(async (b) => `launch done: ${await browser.version()}`);
     }

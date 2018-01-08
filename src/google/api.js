@@ -67,10 +67,13 @@ async function storeToken(token) {
   console.log('Token stored to ' + TOKEN_PATH);
 }
 
-exports.execute = async (method) => {
+exports.getAuthClient = async () => {
+  let authClient = null;
   await authorize(CLIENT_SECRET)
     .then((client) => {
-      method(client);
+      authClient = client;
     });
+
+  return authClient;
 };
 
