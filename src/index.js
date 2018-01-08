@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
 const setup = require('./starter-kit/setup');
 const amex = require('./scrapers/amex');
 const transactionsLogger = require('./google/transactionsLogger');

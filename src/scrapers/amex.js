@@ -1,9 +1,13 @@
-const CRED = require('../../.credentials/amex.json');
+const CRED = {
+  user: process.env.AMEX_USER,
+  password: process.env.AMEX_PASSWORD,
+};
+const AMEX_URL = 'https://online.americanexpress.com/myca/estmt/us/list.do?intlink=us-ser-soa-accnthub-fin-recentactivity&BPIndex=0&request_type=authreg_Statement&Face=en_US&sorted_index=0';
 
 exports.scrape = async (browser) => {
   const page = await browser.newPage();
   page.on('console', (msg) => console.log('PAGE LOG:', ...msg.args));
-  await page.goto(CRED.url);
+  await page.goto(AMEX_URL);
 
   // Login
   await page.waitFor('#lilo_userName');
