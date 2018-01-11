@@ -57,7 +57,7 @@ function removeDuplicates(transactions, prevTransactions) {
 function stringifyTransaction(transaction) {
   const normalizedTransaction = transaction.slice(0);
   // to compare the transactions we need to cleanup the columns
-  // that are manually edoted in the spreadsheet
+  // that are manually edited in the spreadsheet
   normalizedTransaction[1] = '';
   normalizedTransaction[3] = '';
   // we need to normalize the data to make sure it's comparable
