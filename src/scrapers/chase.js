@@ -1,10 +1,14 @@
 const CRED = {
   user: process.env.CHASE_USER,
-  password: process.env.CHASE_PASSWORD,
+  password: process.env.CHASE_PASSWORD || '',
 };
 const URL = 'https://secure01c.chase.com/web/auth/?fromOrigin=https://secure01c.chase.com#/logon/logon/chaseOnline';
 
 exports.scrape = async (browser) => {
+  if (!CRED.password.length) {
+    console.log('missing Chase Credentials');
+    return [];
+  }
   const page = await browser.newPage();
   page.on('console', (msg) => console.log('PAGE LOG:', ...msg.args));
   await page.goto(URL, {
@@ -20,10 +24,10 @@ exports.scrape = async (browser) => {
   await page.click('#signin-button');
 
   // Get transactions
-  await page.waitFor('#activityTable');
-  await new Promise((res, rej) => {
-    setTimeout(res, 2000);
+  await page.waitForNavigation({
+    timeout: 60000,
   });
+  await page.waitFor('#activityTable');
   const transactions = await page.evaluate(scrapeThePage);
 
   await page.close();

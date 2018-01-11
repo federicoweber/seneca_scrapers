@@ -26,8 +26,7 @@ exports.run = async (browser) => {
   const amexTransactions = await amex.scrape(browser);
   transactions = transactions.concat(amexTransactions);
 
-  const
-  chaseTransactions = await chase.scrape(browser);
+  const chaseTransactions = await chase.scrape(browser);
   transactions = transactions.concat(chaseTransactions);
 
   await transactionsLogger.log(transactions);
