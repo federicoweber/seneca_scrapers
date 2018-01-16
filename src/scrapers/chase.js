@@ -3,6 +3,7 @@ const CRED = {
   password: process.env.CHASE_PASSWORD || '',
 };
 const URL = 'https://secure01c.chase.com/web/auth/?fromOrigin=https://secure01c.chase.com#/logon/logon/chaseOnline';
+const CHASE_AUTH_CODE = process.env.CHASE_AUTH_CODE || null;
 
 exports.scrape = async (browser) => {
   if (!CRED.password.length) {
@@ -27,8 +28,30 @@ exports.scrape = async (browser) => {
   await page.waitForNavigation({
     timeout: 60000,
   });
-  await page.waitFor('#activityTable');
-  const transactions = await page.evaluate(scrapeThePage);
+  await page.waitFor(2000);
+  const unrecognizedDevice = await page.$eval(
+    '#mainpanel > div > h3',
+    (el) => el.innerText.match('don\'t recognize')
+  );
+  let transactions = [];
+  if (unrecognizedDevice) {
+    console.log('Chase unrecognized device');
+    // as this require to set an identification code provided by chase
+    // the outh will executed on a new run
+
+    if (CHASE_AUTH_CODE) {
+      // handle second stage login
+      transactions = await page.evaluate(scrapeThePage);
+    } else {
+      // request auth code
+      await page.click('#requestDeliveryDevices-sm');
+      await page.waitFor(2000);
+      await page.click('input[type="radio"]');
+      console.log('Chase login failed, please provide CHASE_AUTH_CODE');
+    }
+  } else {
+    transactions = await page.evaluate(scrapeThePage);
+  }
 
   await page.close();
 
