@@ -6,7 +6,7 @@ const path = require('path');
 global.appRoot = path.resolve(__dirname);
 
 const setup = require('./starter-kit/setup');
-const amex = require('./scrapers/amex');
+// const amex = require('./scrapers/amex');
 const chase = require('./scrapers/chase');
 const transactionsLogger = require('./google/transactionsLogger');
 
