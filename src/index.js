@@ -7,7 +7,6 @@ global.appRoot = path.resolve(__dirname);
 
 const setup = require('./starter-kit/setup');
 const amex = require('./scrapers/amex');
-const chase = require('./scrapers/chase');
 const transactionsLogger = require('./google/transactionsLogger');
 
 exports.handler = async (event, context, callback) => {
@@ -25,9 +24,6 @@ exports.run = async (browser) => {
   let transactions = [];
   const amexTransactions = await amex.scrape(browser);
   transactions = transactions.concat(amexTransactions);
-
-  const chaseTransactions = await chase.scrape(browser);
-  transactions = transactions.concat(chaseTransactions);
 
   await transactionsLogger.log(transactions);
 
