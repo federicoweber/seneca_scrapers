@@ -1,3 +1,4 @@
+const rp = require('request-promise');
 const Bluebird = require('bluebird');
 const sheetsApi = require('./api');
 const google = require('googleapis');
@@ -6,6 +7,7 @@ const spreadsheetsValues = Bluebird.promisifyAll(sheets.spreadsheets.values);
 
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const RANGE = 'transactions!A2:F';
+const IFTTT_KEY = process.env.IFTTT_KEY || '';
 
 exports.log = async (transactions) => {
   const authClient = await sheetsApi.getAuthClient();
@@ -19,7 +21,24 @@ const logNewTransactions = async (authClient, transactions = []) => {
     prevTransactions
   );
   await appendTransactions(authClient, uniqTransactions);
-  console.log(`${uniqTransactions.length} new transactions logged!`);
+  const totalValue = uniqTransactions.reduce(
+    (tot, data) => tot += data[5],
+    0
+  );
+  // eslint-disable-next-line max-len
+  console.log(`Logged ${uniqTransactions.length} transacionsions, for a total of $${totalValue.toFixed(2)}.`);
+  // Send push notification via IFTTT
+  await rp({
+    method: 'POST',
+    uri: `https://maker.ifttt.com/trigger/seneca_scraper/with/key/${IFTTT_KEY}`,
+    body: {
+      // eslint-disable-next-line max-len
+      value1: `Logged ${uniqTransactions.length} transacionsions, for a total of $${totalValue.toFixed(2)}.`,
+    },
+    json: true,
+  }).catch((err) => {
+    console.log(`IFTTT notify error: ${err.message}`);
+  });
   return uniqTransactions;
 };
 
