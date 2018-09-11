@@ -10,7 +10,6 @@ const amex = require('./scrapers/amex');
 const transactionsLogger = require('./google/transactionsLogger');
 
 exports.handler = async (event, context, callback) => {
-  // For keeping the browser launch
   context.callbackWaitsForEmptyEventLoop = false;
   const browser = await setup.getBrowser();
   exports.run(browser).then(
@@ -21,6 +20,7 @@ exports.handler = async (event, context, callback) => {
 };
 
 exports.run = async (browser) => {
+  await transactionsLogger.getGoogleClient();
   let transactions = [];
   const amexTransactions = await amex.scrape(browser);
   transactions = transactions.concat(amexTransactions);

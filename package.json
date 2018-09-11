@@ -1,7 +1,7 @@
 {
   "name": "seneca_scraper",
   "version": "0.1.0",
-  "description": "A simple tool to track personal expenses in a spread Google spreadsheet",
+  "description": "A simple tool to track personal expenses in a Google spreadsheet",
   "author": "federicoweber@gmail.com",
   "scripts": {
     "package": "npm run package-prepare && cp chrome/headless_shell.tar.gz dist && cd dist && zip -rq ../package.zip . && cd .. && rm -rf dist",

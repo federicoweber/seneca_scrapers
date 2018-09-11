@@ -5,9 +5,9 @@ const GoogleAuth = Bluebird.promisifyAll(require('google-auth-library'));
 
 // If modifying these scopes, delete your previously saved credentials
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
-const TOKEN_DIR = `${appRoot}/.credentials/`;
-const TOKEN_PATH = TOKEN_DIR + 'sheets.googleapis.com.token.json';
-const CLIENT_SECRET = require(`${appRoot}/.credentials/google_client_id.json`);
+const TOKEN_DIR = `${appRoot}/.credentials`;
+const TOKEN_PATH = `${TOKEN_DIR}/sheets.googleapis.com.token.json`;
+const CLIENT_SECRET = require(`${TOKEN_DIR}/google_client_id.json`);
 
 async function authorize(credentials) {
   const clientSecret = credentials.installed.client_secret;
@@ -32,7 +32,7 @@ async function getNewToken(oauth2Client) {
     scope: SCOPES,
   });
 
-  console.log('Authorize this app by visiting this url: ', authUrl);
+  console.info('\x1b[33m Authorize this app by visiting this url: \x1b[37m', authUrl);
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,

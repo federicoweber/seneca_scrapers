@@ -1,46 +1,59 @@
-# Puppeteer Lambda Starter Kit
+# Seneca Scapers
 
-Starter Kit for running Headless-Chrome by [Puppeteer](https://github.com/GoogleChrome/puppeteer) on AWS Lambda.
+A series of small scrapers, that runs on AWS Lambda, to store personal transactions on a Google Spreadsheet.
+It includes the following scrapers:
+1. Amex
+2. Chase (_WIP, need to fix 2fa_)
 
+## Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+
+1. Install dependencies with Yarn `yarn`
+
+### populate env variables
+
+1. Populate `.env` with the following variables
 ```
-$ git clone -o starter-kit https://github.com/sambaiz/puppeteer-lambda-starter-kit.git your_project_name
+AMEX_USER=*******
+AMEX_PASSWORD=*******
+SPREADSHEET_ID=*******
+IFTTT_KEY=******* (This is used to send push notifications using [IFTTT's webhooks](https://ifttt.com/maker_webhooks)) event name should be `seneca_scraper`
 ```
 
-## Run on local
+### Get Google APIs access credentials
+1. Create a Google APIs credential in [Google Cloud Platform](https://console.cloud.google.com/apis/credentials)
+2. Download those in .json format and copy it in `.credentials/sheets.googleapis.com.token.json`
+3. run `yarn run local`, ignore the Chromium window and follow console output to authorize the app.
 
-By executing `SLOWMO_MS=250 npm run local`, you can check the operation while actually viewing the chrome (non-headless, slowmo).
+## Running it locally
+Run `yarn run local`. By executing `SLOWMO_MS=250 npm run local`, you can check the operation while viewing the chrome (non-headless, slowmo).
 
-## Packaging & Deploy
-
-Lambda's memory needs to be set to at least 384 MB, but the more memory, the better the performance of any operations.
-
+## Deployment
+1. Create a new Lambda function **(Lambda's memory needs to be at least 384 MB)**
+2. set the following env variables **(it's recommended to encrypt passwords)**
 ```
-512MB -> goto(youtube): 6.481s
-1536MB(Max) -> goto(youtube): 2.154s
+AMEX_USER=*******
+AMEX_PASSWORD=*******
+SPREADSHEET_ID=*******
+IFTTT_KEY=*******
+NODE_ENV=production
 ```
+3. Run `npm run package`, and deploy the package.zip.
 
-### chrome in package (recommended)
+## Built With
 
-Run `npm run package`, and deploy the package.zip.
+* [Puppeteer](https://github.com/GoogleChrome/puppeteer) on AWS Lambda.
 
-### chrome NOT in package
+## Authors
 
-Due to the large size of Chrome, it may exceed the [Lambda package size limit](http://docs.aws.amazon.com/lambda/latest/dg/limits.html) (50MB) depending on the other module to include. 
-In that case, put Chrome in S3 and download it at container startup so startup time will be longer.
+* **Federico Weber** - [FedericoWeber](https://github.com/FedericoWeber)
 
-Run `npm run package-nochrome`, deploy the package.zip, and set following env valiables on Lambda.
+## License
 
-- `CHROME_BUCKET`(required): S3 bucket where Chrome is put
-- `CHROME_KEY`(optional): S3 key. default: `headless_shell.tar.gz`
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
-## Build Headless-Chrome (optional)
+## Acknowledgments
 
-This kit includes Chrome built by myself because official build Chrome installed by Puppeteer has problems about running on Lambda (missing shared library etc.).
+Thanks to [sambaiz](https://github.com/sambaiz) for the great work on [Puppeteer Lambda Starter Kit](https://github.com/sambaiz/puppeteer-lambda-starter-kit)!
 
-If you want to use latest chrome, run chrome/buildChrome.sh on EC2 having at least 16GB memory and 30GB volume. 
-See also [serverless-chrome](https://github.com/adieuadieu/serverless-chrome/blob/master/chrome/README.md).
-Once you build it, link to `headless_shell.tar.gz` in `chrome` dir.
-
-## Article
-
-[Lambda上でPuppeteer/Headless Chromeを動かすStarter Kitを作った - sambaiz-net](https://www.sambaiz.net/article/132/)
